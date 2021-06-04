@@ -30,7 +30,7 @@ for bin in openssl curl docker-compose docker git awk sha1sum; do
 done
 
 if [ -f mailcow.conf ]; then
-  read -r -p "A config file exists and will be overwritten, are you sure you want to contine? [y/N] " response
+  read -r -p "A config file exists and will be overwritten, are you sure you want to continue? [y/N] " response
   case $response in
     [yY][eE][sS]|[yY])
       mv mailcow.conf mailcow.conf_backup
@@ -214,6 +214,16 @@ MAILDIR_GC_TIME=7200
 
 ADDITIONAL_SAN=
 
+# Additional server names for mailcow UI
+#
+# Specify alternative addresses for the mailcow UI to respond to
+# This is useful when you set mail.* as ADDITIONAL_SAN and want to make sure mail.maildomain.com will always point to the mailcow UI.
+# If the server name does not match a known site, Nginx decides by best-guess and may redirect users to the wrong web root.
+# You can understand this as server_name directive in Nginx.
+# Comma separated list without spaces! Example: ADDITIONAL_SERVER_NAMES=a.b.c,d.e.f
+
+ADDITIONAL_SERVER_NAMES=
+
 # Skip running ACME (acme-mailcow, Let's Encrypt certs) - y/n
 
 SKIP_LETS_ENCRYPT=n
@@ -269,6 +279,9 @@ USE_WATCHDOG=y
 # Notify about banned IP (includes whois lookup)
 WATCHDOG_NOTIFY_BAN=n
 
+# Subject for watchdog mails. Defaults to "Watchdog ALERT" followed by the error message.
+#WATCHDOG_SUBJECT=
+
 # Checks if mailcow is an open relay. Requires a SAL. More checks will follow.
 # https://www.servercow.de/mailcow?lang=en
 # https://www.servercow.de/mailcow?lang=de
@@ -322,6 +335,13 @@ SOGO_EXPIRE_SESSION=480
 DOVECOT_MASTER_USER=
 # LEAVE EMPTY IF UNSURE
 DOVECOT_MASTER_PASS=
+
+# Let's Encrypt registration contact information
+# Optional: Leave empty for none
+# This value is only used on first order!
+# Setting it at a later point will require the following steps:
+# https://mailcow.github.io/mailcow-dockerized-docs/debug-reset-tls/
+ACME_CONTACT=
 
 EOF
 
